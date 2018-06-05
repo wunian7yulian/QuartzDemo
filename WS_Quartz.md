@@ -48,7 +48,7 @@
 
 5. 表关系及解释
 
-   ![20170204145258590](./image\20170204145258590.png)
+   ![20170204145258590](./image/20170204145258590.png)
 
 |                           |                                          |
 | :------------------------ | :--------------------------------------- |
@@ -123,7 +123,7 @@
 
    2. **一个job可以被多个Trigger 绑定，但是一个Trigger只能绑定一个job！**
 
-      ![1525850863(1)](.\image\1525850863(1).jpg)
+      ![1525850863(1)](./image/1525850863(1).jpg)
 
 7. quartz.properties  Quartz可更改配置
 
@@ -396,7 +396,7 @@
 
      4. 执行结果:
 
-        ![1526268088(1)](.\image\1526268088(1).jpg)
+        ![1526268088(1)](./image/1526268088(1).jpg)
 
 
 
@@ -473,7 +473,7 @@
 
   Scheduler 的实现有 两种: 
 
-  ​	![1526270342(1)](.\image\1526270342(1).jpg)
+  ​	![1526270342(1)](./image/1526270342(1).jpg)
 
   代码中创建的是 new StdSchedulerFactory() ;
 
@@ -836,7 +836,7 @@
   this.resources.getJobStore().storeJobAndTrigger(jobDetail, trig);
   ```
 
-  追溯到JobStore 发现他有几个实现:![GBO52GOOM45WX3WY4KS3R4](.\image\]GBO52GOOM45WX3WY4KS3R4.png)
+  追溯到JobStore 发现他有几个实现:![GBO52GOOM45WX3WY4KS3R4](./image/GBO52GOOM45WX3WY4KS3R4.png)
 
   "存储" 注册到JobStore的 方式区别也就在这里托盘而出:
 
@@ -1166,7 +1166,7 @@
 
    3. 选择 tables_db2_v8.sql 进行导入
 
-      ![1528168969(1)](.\image\四\1528168969(1).jpg) 
+      ![1528168969(1)](./image/四/1528168969(1).jpg) 
 
       为了防止重复 都加了 qrtz作为表名的前缀 
 
@@ -1227,7 +1227,7 @@
 
          ```java
          package com.ws.quartzdemo1001.job02_JDBC_HelloWorld;
-
+    
          import com.ws.quartzdemo1001.job01_HelloWorld.HelloJob;
          import org.quartz.Job;
          import org.quartz.JobExecutionContext;
@@ -1236,31 +1236,31 @@
          import org.slf4j.LoggerFactory;
          import java.text.SimpleDateFormat;
          import java.util.Date;
-
+    
          public class MyJobForJDBCQuartz implements Job {
-
+    
              private static Logger log = LoggerFactory.getLogger(MyJobForJDBCQuartz.class);
-
+    
              @Override
              public void execute(JobExecutionContext context) throws JobExecutionException {
                  log.info("MyJobForJDBCQuartz  is start ..................");
-
+    
                  log.info("Hello JDBC Quartz !!! "+
                          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ").format(new Date()));
-
+    
                  log.info("MyJobForJDBCQuartz  is end .....................");
              }
          }
          ```
-
+    
       3. 编写调度程序
-
+    
          ```java
          package com.ws.quartzdemo1001.job02_JDBC_HelloWorld;
-
+    
          import org.quartz.*;
          import org.quartz.impl.StdSchedulerFactory;
-
+    
          public class QuartzJDBCTest {
              public static void main(String[] args) throws SchedulerException {
                  //  1 创建  一个jobDetail 实例
@@ -1286,9 +1286,9 @@
              }
          }
          ```
-
+    
           运行时发现启动不起来 原来忘了没有数据库的一个驱动 jar 做path  引入: 
-
+    
          ```xml-dtd
            		<dependency>
                      <groupId>mysql</groupId>
@@ -1296,15 +1296,15 @@
                      <version>5.1.35</version>
                  </dependency>
          ```
-
+    
          然后启动 发现 正确执行并打印了5次 
-
+    
          其中JobDetail在创建时 :  storeDurably(true) 标识任务将会记录在数据库中保存起来
-
+    
          当下次执行时不需要重复创建jobDetail 
-
+    
          尝试多次执行: 抛出: 
-
+    
          ```java
          Exception in thread "main" org.quartz.ObjectAlreadyExistsException: Unable to store Job : 'jdbcGroup_01.jdbcJob_01', because one already exists with this identification.
          	at org.quartz.impl.jdbcjobstore.JobStoreSupport.storeJob(JobStoreSupport.java:1108)
@@ -1318,17 +1318,17 @@
          	at org.quartz.impl.StdScheduler.scheduleJob(StdScheduler.java:249)
          	at com.ws.quartzdemo1001.job02_JDBC_HelloWorld.QuartzJDBCTest.main(QuartzJDBCTest.java:25)
          ```
-
+    
       4. 当我回去看的时候发现日志里面打印了类如: 
-
+    
          ```java
          14:29:35.085 [QuartzScheduler_DefaultQuartzScheduler-NON_CLUSTERED_MisfireHandler] DEBUG org.quartz.impl.jdbcjobstore.JobStoreTX - MisfireHandler: scanning for misfires...
          14:29:35.086 [QuartzScheduler_DefaultQuartzScheduler-NON_CLUSTERED_MisfireHandler] DEBUG org.quartz.impl.jdbcjobstore.JobStoreTX - Found 0 triggers that missed their scheduled fire-time.
          14:29:55.106 [DefaultQuartzScheduler_QuartzSchedulerThread] DEBUG org.quartz.core.QuartzSchedulerThread - batch acquisition of 0 triggers
          ```
-
+    
          这里其实是一个任务进度的扫描  misfires 也是quartz 的一个独有 且完善的一个机制 他保证了我们的所有该执行的任务不会丢失掉
-
+    
          **由此看来 quartz的 是一个高度可用 有着非常完美的适用方案的一个调度框架** 
 
 # 五.Demo 其他了解
